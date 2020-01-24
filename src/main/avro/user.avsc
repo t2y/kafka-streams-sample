@@ -1,0 +1,21 @@
+{
+  "type" : "record",
+  "name" : "User",
+  "namespace" : "kafka.streams.sample.avro",
+  "fields" : [ {
+    "name" : "id",
+    "type" : "long"
+  }, {
+    "name" : "name",
+    "type" : "string"
+  }, {
+    "name" : "email",
+    "type" : "string"
+  }, {
+    "name" : "logged_in",
+    "type" : "boolean"
+  }, {
+    "name" : "age",
+    "type" : "int"
+  } ]
+}

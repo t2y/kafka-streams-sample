@@ -1,0 +1,6 @@
+{
+  "type" : "enum",
+  "name" : "Product",
+  "namespace" : "kafka.streams.sample.avro.sub",
+  "symbols" : [ "JUMPERS", "UNDERPANTS", "STOCKINGS", "JACKET" ]
+}

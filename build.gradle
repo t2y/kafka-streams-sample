@@ -22,12 +22,15 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.10'
 
     // for logging
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.slf4j:slf4j-api:1.7.26'
 
-    // kafka streams
-    implementation 'org.apache.kafka:kafka-streams:2.4.0'
-    implementation 'org.apache.kafka:kafka-clients:2.4.0'
+    // kafka and kafka streams
+    implementation 'org.apache.kafka:kafka-streams:2.3.1'
+    implementation 'org.apache.kafka:kafka-clients:2.3.1'
+
+    // kafka streams examples
+    implementation 'org.apache.kafka:kafka-streams-examples:2.3.1'
 
     // avro
     implementation 'org.apache.avro:avro:1.9.1'
@@ -40,7 +43,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'kafka.streams.sample.App'
+    mainClassName = 'kafka.streams.sample.UserService'
 }
 
 test {
@@ -50,4 +53,30 @@ test {
 avro {
   dateTimeLogicalType = 'JSR310'
   createOptionalGetters = true
+}
+
+schemaRegistry {
+    url = 'http://localhost:8081/'
+
+    config {
+        subject('user', 'FULL_TRANSITIVE')
+    }
+
+    download {
+        subject('user', 'src/main/avro')
+        subject('order', 'src/main/avro')
+        subject('product-enum', 'src/main/avro')
+    }
+
+    register {
+        subject('user', 'src/main/avro/user.avsc')
+        subject('order', 'src/main/avro/order.avsc')
+        subject('product-enum', 'src/main/avro/product-enum2.avsc')
+    }
+
+    compatibility {
+        subject('user', 'src/main/avro/user.avsc')
+        subject('order', 'src/main/avro/order.avsc')
+        subject('product-enum', 'src/main/avro/product-enum2.avsc')
+    }
 }
