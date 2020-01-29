@@ -17,3 +17,10 @@ Start kafka broker and schema registry servers on localhost.
 ```bash
 $ gradle run
 ```
+
+## Reference
+
+* https://kafka.apache.org/documentation/streams/
+* https://docs.confluent.io/current/schema-registry/index.html
+* https://docs.confluent.io/current/streams/code-examples.html
+* https://github.com/confluentinc/kafka-streams-examples
