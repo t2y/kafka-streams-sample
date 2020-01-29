@@ -11,3 +11,9 @@ $ git clone git@github.com:davidmc24/gradle-avro-plugin.git
 $ cd gradle-avro-plugin/
 $ ./gradlew publishToMavenLocal
 ```
+
+Start kafka broker and schema registry servers on localhost.
+
+```bash
+$ gradle run
+```
