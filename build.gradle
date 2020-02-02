@@ -80,3 +80,17 @@ schemaRegistry {
         subject('product-enum', 'src/main/avro/product-enum2.avsc')
     }
 }
+
+task runProducer(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run producer main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.cli.ProducerMain'
+}
+
+task runConsumer(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run consumer main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.cli.ConsumerMain'
+}

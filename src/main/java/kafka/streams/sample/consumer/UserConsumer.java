@@ -1,4 +1,4 @@
-package kafka.streams.sample;
+package kafka.streams.sample.consumer;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 
+import kafka.streams.sample.UserService;
 import kafka.streams.sample.avro.User;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -39,17 +40,33 @@ public class UserConsumer {
     this.props = this.createProperties();
   }
 
-  public void retrieve() {
+  private static final Duration DURATION_SEC = Duration.ofSeconds(3);
+  private static final long TIMEOUT_MS = 1000 * 60 * 60 * 24; // 1 day
+
+  @SuppressWarnings("deprecation")
+  private ConsumerRecords<Long, User> poolInternal(
+      KafkaConsumer<Long, User> consumer, boolean withAsync) {
+    if (withAsync) {
+      return consumer.poll(DURATION_SEC);
+    }
+    return consumer.poll(TIMEOUT_MS);
+  }
+
+  public void pool(boolean withAsync) {
     try (val consumer = new KafkaConsumer<Long, User>(this.props)) {
       consumer.subscribe(Collections.singletonList(UserService.TOPIC));
-      final ConsumerRecords<Long, User> records = consumer.poll(Duration.ofSeconds(1));
-      for (val record : records) {
-        log.info("key: " + record.key());
-        val user = record.value();
-        log.info("value: " + user.toString());
-        log.info("------------------------------------------------------------------------");
+      while (true) {
+        log.info("before pool");
+        val records = this.poolInternal(consumer, withAsync);
+        for (val record : records) {
+          log.info("key: " + record.key());
+          val user = record.value();
+          log.info("value: " + user.toString());
+          log.info("------------------------------------------------------------------------");
+        }
+        consumer.commitSync();
+        log.info("after commitSync");
       }
-      consumer.commitSync();
     }
   }
 }
