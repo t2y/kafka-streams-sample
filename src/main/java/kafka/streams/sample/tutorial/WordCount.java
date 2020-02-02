@@ -1,4 +1,4 @@
-package kafka.streams.sample;
+package kafka.streams.sample.tutorial;
 
 import java.util.Arrays;
 import java.util.Locale;
