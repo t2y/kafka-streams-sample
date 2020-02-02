@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrintUserProcessor implements Processor<String, Long> {
 
+  private static long SCHEDULE_DURATION_SEC = 10;
+
   private ProcessorContext context;
   private KeyValueStore<String, Long> store;
 
@@ -26,7 +28,7 @@ public class PrintUserProcessor implements Processor<String, Long> {
     this.store = (KeyValueStore<String, Long>) this.context.getStateStore(UserService.STORE_COUNTS);
 
     this.context.schedule(
-        Duration.ofSeconds(30),
+        Duration.ofSeconds(SCHEDULE_DURATION_SEC),
         PunctuationType.STREAM_TIME,
         (timestamp) -> {
           log.info("called context.schedule(): " + DateTimeUtil.getLocalDateTime(timestamp));

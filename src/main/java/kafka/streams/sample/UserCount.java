@@ -22,6 +22,7 @@ import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.TimeWindows;
+import org.apache.kafka.streams.kstream.internals.WindowingDefaults;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
@@ -60,6 +61,7 @@ public class UserCount {
     p.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
     p.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
     p.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 2);
+    p.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);
     p.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
     p.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, UserService.SCHEMA_REGISTRY_URL);
     return p;
@@ -86,6 +88,8 @@ public class UserCount {
           .withLoggingEnabled(
               this.changelogConfig); // enable changelogging, with custom changelog settings
 
+  private static long WINDOW_SEC = 5;
+
   private void aggregateUserCounts(StreamsBuilder builder) {
     val topicConsumed = Consumed.with(Serdes.Long(), USER_SERDE);
     val countByUserProduced = Produced.with(Serdes.String(), Serdes.Long());
@@ -93,8 +97,10 @@ public class UserCount {
     source
         .mapValues(value -> value.getName())
         .groupBy((key, value) -> value, Grouped.with(Serdes.String(), null))
-        .windowedBy(TimeWindows.of(Duration.ofSeconds(2)))
-        .count(Materialized.<String, Long, WindowStore<Bytes, byte[]>>as("local-counts-store"))
+        .windowedBy(TimeWindows.of(Duration.ofSeconds(WINDOW_SEC)))
+        .count(
+            Materialized.<String, Long, WindowStore<Bytes, byte[]>>as("local-counts-store")
+                .withRetention(Duration.ofMillis(WindowingDefaults.DEFAULT_RETENTION_MS + 1)))
         .toStream()
         .map(
             (k, v) -> {
