@@ -58,7 +58,7 @@ public class UserProducer {
       KafkaProducer<Long, User> producer, long userId, String name, String email)
       throws InterruptedException {
     val user = this.createUser(userId, name, email);
-    val record = new ProducerRecord<Long, User>(UserService.TOPIC, userId, user);
+    val record = new ProducerRecord<Long, User>(UserService.USER_TOPIC, userId, user);
     producer.send(record);
     log.info(String.format("sent record: %s", user.toString()));
     Thread.sleep(100L);
@@ -76,7 +76,7 @@ public class UserProducer {
   public void publishUsers(long n) {
     try (val producer = new KafkaProducer<Long, User>(this.props)) {
       for (val user : this.createUsers(n)) {
-        val record = new ProducerRecord<Long, User>(UserService.TOPIC, user.getId(), user);
+        val record = new ProducerRecord<Long, User>(UserService.USER_TOPIC, user.getId(), user);
         producer.send(record);
         log.info(String.format("sent record: %s", user.toString()));
       }

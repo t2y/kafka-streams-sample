@@ -81,6 +81,13 @@ schemaRegistry {
     }
 }
 
+task runStreams(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run streams app main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.UserService'
+}
+
 task runProducer(type: JavaExec) {
     group = 'Execution'
     description = 'Run producer main class'

@@ -54,7 +54,7 @@ public class UserConsumer {
 
   public void pool(boolean withAsync) {
     try (val consumer = new KafkaConsumer<Long, User>(this.props)) {
-      consumer.subscribe(Collections.singletonList(UserService.TOPIC));
+      consumer.subscribe(Collections.singletonList(UserService.USER_TOPIC));
       while (true) {
         log.info("before pool");
         val records = this.poolInternal(consumer, withAsync);
