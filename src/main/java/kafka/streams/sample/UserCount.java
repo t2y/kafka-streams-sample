@@ -106,7 +106,7 @@ public class UserCount {
             (k, v) -> {
               val key = k.key();
               val startEnd = DateTimeUtil.getWindowStartAndEnd(k.window());
-              log.info(startEnd + ": " + key + ", " + String.valueOf(v));
+              log.info("{}: {}, {}", startEnd, key, v.toString());
               return new KeyValue<>(key, v);
             })
         .to(COUNT_BY_USER_TOPIC, countByUserProduced);

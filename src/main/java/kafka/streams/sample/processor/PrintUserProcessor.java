@@ -30,13 +30,12 @@ public class PrintUserProcessor implements Processor<String, Long> {
     this.context.schedule(
         Duration.ofSeconds(SCHEDULE_DURATION_SEC),
         PunctuationType.STREAM_TIME,
-        (timestamp) -> {
-          log.info("called context.schedule(): " + DateTimeUtil.getLocalDateTime(timestamp));
+        timestamp -> {
+          log.info("called context.schedule(): {}", DateTimeUtil.getLocalDateTime(timestamp));
           try (val iter = this.store.all()) {
             while (iter.hasNext()) {
               val kv = iter.next();
               log.info(" - " + kv.toString());
-              // this.context.forward(kv.key, kv.value); // if processor has another processor/sink
             }
           }
           this.context.commit();
@@ -45,7 +44,7 @@ public class PrintUserProcessor implements Processor<String, Long> {
 
   @Override
   public synchronized void process(String key, Long value) {
-    log.info("called process(): " + key + ", " + value.toString());
+    log.info("called process(): {}, {}",key, value.toString());
     val count = this.store.putIfAbsent(key, 0L);
     this.store.put(key, count + value);
   }
