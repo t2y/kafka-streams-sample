@@ -12,7 +12,7 @@ public class UserService {
 
   public static void main(String[] args) {
     log.info("start");
-    new UserCount().aggregate();
+    new UserCount(new UserConfig()).aggregate();
     log.info("end");
   }
 }
