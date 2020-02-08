@@ -8,6 +8,7 @@ public class UserService {
   public static final String BOOTSTRAP_SERVERS = "localhost:9092";
   public static final String SCHEMA_REGISTRY_URL = "http://localhost:8081";
 
+  public static final String COUNT_BY_USER_TOPIC = "user-topic-agg-count-by-user";
   public static final String STORE_COUNTS = "user-store-counts";
 
   public static void main(String[] args) {

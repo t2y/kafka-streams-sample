@@ -2,6 +2,9 @@ package kafka.streams.sample.processor;
 
 import java.time.Duration;
 
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.processor.PunctuationType;
@@ -9,8 +12,6 @@ import org.apache.kafka.streams.state.KeyValueStore;
 
 import kafka.streams.sample.UserService;
 import kafka.streams.sample.util.DateTimeUtil;
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class PrintUserProcessor implements Processor<String, Long> {
@@ -44,8 +45,11 @@ public class PrintUserProcessor implements Processor<String, Long> {
 
   @Override
   public synchronized void process(String key, Long value) {
-    log.info("called process(): {}, {}",key, value.toString());
-    val count = this.store.putIfAbsent(key, 0L);
+    log.info("called process(): {}, {}", key, value.toString());
+    var count = this.store.putIfAbsent(key, 0L);
+    if (count == null) {
+      count = 0L;
+    }
     this.store.put(key, count + value);
   }
 

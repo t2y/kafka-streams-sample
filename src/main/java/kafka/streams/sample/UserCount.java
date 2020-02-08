@@ -1,10 +1,13 @@
 package kafka.streams.sample;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
+import lombok.Getter;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,9 +36,7 @@ import kafka.streams.sample.util.DateTimeUtil;
 @Slf4j
 public class UserCount {
 
-  private static final String COUNT_BY_USER_TOPIC = "user-topic-agg-count-by-user";
-
-  private final Properties props;
+  @Getter private final Properties props;
 
   public UserCount(UserConfig config) {
     this.props = config.getProps();
@@ -44,21 +45,22 @@ public class UserCount {
   private Map<String, String> changelogConfig =
       Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "1");
 
-  private StoreBuilder<KeyValueStore<String, Long>> countStoreSupplier =
+  private final StoreBuilder<KeyValueStore<String, Long>> countStoreSupplier =
       Stores.keyValueStoreBuilder(
               Stores.persistentKeyValueStore(UserService.STORE_COUNTS),
               Serdes.String(),
               Serdes.Long())
           .withLoggingEnabled(this.changelogConfig);
 
-  private static long WINDOW_SEC = 5;
+  private static final long WINDOW_SEC = 5;
 
-  private void aggregateUserCounts(StreamsBuilder builder) {
+  @VisibleForTesting
+  void aggregateUserCounts(StreamsBuilder builder) {
     val topicConsumed = Consumed.with(Serdes.Long(), UserConfig.USER_SERDE);
     val countByUserProduced = Produced.with(Serdes.String(), Serdes.Long());
     val source = builder.<Long, User>stream(UserService.USER_TOPIC, topicConsumed);
     source
-        .mapValues(value -> value.getName())
+        .mapValues(User::getName)
         .groupBy((key, value) -> value, Grouped.with(Serdes.String(), null))
         .windowedBy(TimeWindows.of(Duration.ofSeconds(WINDOW_SEC)))
         .count(
@@ -72,29 +74,34 @@ public class UserCount {
               log.info("{}: {}, {}", startEnd, key, v.toString());
               return new KeyValue<>(key, v);
             })
-        .to(COUNT_BY_USER_TOPIC, countByUserProduced);
+        .to(UserService.COUNT_BY_USER_TOPIC, countByUserProduced);
   }
 
-  private void showUserCounts(Topology topology) {
-    val sourceName = "source-" + COUNT_BY_USER_TOPIC;
+  @VisibleForTesting
+  void showUserCounts(Topology topology) {
+    val sourceName = "source-" + UserService.COUNT_BY_USER_TOPIC;
     val processorName = PrintUserProcessor.class.getSimpleName();
     topology.addSource(
         sourceName,
         Serdes.String().deserializer(),
         Serdes.Long().deserializer(),
-        COUNT_BY_USER_TOPIC);
+        UserService.COUNT_BY_USER_TOPIC);
     topology.addProcessor(processorName, PrintUserProcessor::new, sourceName);
     topology.addStateStore(countStoreSupplier, processorName);
   }
 
-  public void aggregate() {
+  @VisibleForTesting
+  Topology createTopology() {
     val builder = new StreamsBuilder();
     this.aggregateUserCounts(builder);
     val topology = builder.build();
     this.showUserCounts(topology);
-
     log.info(topology.describe().toString());
+    return topology;
+  }
 
+  public void aggregate() {
+    val topology = this.createTopology();
     val streams = new KafkaStreams(topology, this.props);
     val latch = new CountDownLatch(1);
 
