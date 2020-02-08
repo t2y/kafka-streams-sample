@@ -26,17 +26,19 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.26'
 
     // kafka and kafka streams
-    implementation 'org.apache.kafka:kafka-streams:2.3.1'
-    implementation 'org.apache.kafka:kafka-clients:2.3.1'
+    implementation 'org.apache.kafka:kafka-streams:2.4.0'
+    implementation 'org.apache.kafka:kafka-clients:2.4.0'
+    testImplementation 'org.apache.kafka:kafka-streams-test-utils:2.4.0'
 
     // kafka streams examples
-    implementation 'org.apache.kafka:kafka-streams-examples:2.3.1'
+    implementation 'org.apache.kafka:kafka-streams-examples:2.4.0'
 
     // avro
     implementation 'org.apache.avro:avro:1.9.1'
-    implementation 'io.confluent:kafka-streams-avro-serde:5.3.2'
-    implementation 'io.confluent:kafka-avro-serializer:5.3.2'
+    implementation 'io.confluent:kafka-streams-avro-serde:5.4.0'
+    implementation 'io.confluent:kafka-avro-serializer:5.4.0'
 
+    // others
     implementation 'com.google.guava:guava:28.0-jre'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
