@@ -96,7 +96,7 @@ public class UserCount {
     this.aggregateUserCounts(builder);
     val topology = builder.build();
     this.showUserCounts(topology);
-    log.info(topology.describe().toString());
+    log.info("\n{}", topology.describe());
     return topology;
   }
 
