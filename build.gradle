@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'com.commercehub.gradle.plugin.avro' version '0.17.1-SNAPSHOT'
+    id 'com.commercehub.gradle.plugin.avro' version '0.19.0'
     id 'com.github.imflog.kafka-schema-registry-gradle-plugin' version '0.8.0'
     id 'java'
 }
@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.apache.kafka:kafka-streams-examples:2.4.0'
 
     // avro
-    implementation 'org.apache.avro:avro:1.9.1'
+    implementation 'org.apache.avro:avro:1.9.2'
     implementation 'io.confluent:kafka-streams-avro-serde:5.4.0'
     implementation 'io.confluent:kafka-avro-serializer:5.4.0'
 
