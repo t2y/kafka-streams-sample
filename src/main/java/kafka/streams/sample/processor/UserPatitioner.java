@@ -1,11 +1,10 @@
 package kafka.streams.sample.processor;
 
+import kafka.streams.sample.avro.User;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.processor.StreamPartitioner;
-
-import kafka.streams.sample.avro.User;
 
 public class UserPatitioner implements StreamPartitioner<Long, User> {
 

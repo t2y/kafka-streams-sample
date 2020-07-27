@@ -2,21 +2,18 @@ package kafka.streams.sample.producer;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
+import kafka.streams.sample.UserService;
+import kafka.streams.sample.avro.User;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.LongSerializer;
-
-import kafka.streams.sample.UserService;
-import kafka.streams.sample.avro.User;
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UserProducer {

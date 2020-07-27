@@ -2,18 +2,14 @@ package kafka.streams.sample;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
-
 import java.util.Collections;
 import java.util.Properties;
-
+import kafka.streams.sample.serde.UserSerde;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
-
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
-
-import kafka.streams.sample.serde.UserSerde;
 
 @Getter
 @ToString

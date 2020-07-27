@@ -2,14 +2,12 @@ package kafka.streams.sample.tutorial;
 
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
-
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Pipe {

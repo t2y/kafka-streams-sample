@@ -1,17 +1,14 @@
 package kafka.streams.sample.processor;
 
 import java.time.Duration;
-
-import lombok.val;
+import kafka.streams.sample.UserService;
+import kafka.streams.sample.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
-
+import lombok.val;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.processor.PunctuationType;
 import org.apache.kafka.streams.state.KeyValueStore;
-
-import kafka.streams.sample.UserService;
-import kafka.streams.sample.util.DateTimeUtil;
 
 @Slf4j
 public class PrintUserProcessor implements Processor<String, Long> {

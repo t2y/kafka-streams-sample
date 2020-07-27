@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.FutureTask;
-
-import lombok.val;
+import kafka.streams.sample.avro.User;
 import lombok.extern.slf4j.Slf4j;
-
+import lombok.val;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.apache.kafka.streams.test.TestRecord;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import kafka.streams.sample.avro.User;
 
 @Slf4j
 class UserCountTest {

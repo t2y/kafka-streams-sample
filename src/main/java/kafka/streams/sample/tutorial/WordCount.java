@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
-
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -14,9 +15,6 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
-
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WordCount {

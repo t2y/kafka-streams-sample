@@ -3,20 +3,17 @@ package kafka.streams.sample.consumer;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
-
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
-
+import kafka.streams.sample.UserService;
+import kafka.streams.sample.avro.User;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
-
-import kafka.streams.sample.UserService;
-import kafka.streams.sample.avro.User;
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UserConsumer {

@@ -4,10 +4,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-
-import org.apache.kafka.streams.kstream.Window;
-
 import lombok.val;
+import org.apache.kafka.streams.kstream.Window;
 
 public class DateTimeUtil {
 

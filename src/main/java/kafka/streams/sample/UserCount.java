@@ -1,16 +1,16 @@
 package kafka.streams.sample;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
-
+import kafka.streams.sample.avro.User;
+import kafka.streams.sample.processor.PrintUserProcessor;
+import kafka.streams.sample.util.DateTimeUtil;
 import lombok.Getter;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
-
+import lombok.val;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -28,10 +28,6 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
 import org.apache.kafka.streams.state.WindowStore;
-
-import kafka.streams.sample.avro.User;
-import kafka.streams.sample.processor.PrintUserProcessor;
-import kafka.streams.sample.util.DateTimeUtil;
 
 @Slf4j
 public class UserCount {
