@@ -1,12 +1,10 @@
 plugins {
     id 'application'
-    id 'com.commercehub.gradle.plugin.avro' version '0.19.0'
-    id 'com.github.imflog.kafka-schema-registry-gradle-plugin' version '0.8.0'
+    id 'com.commercehub.gradle.plugin.avro' version '0.20.0'
     id 'java'
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
     maven {
@@ -16,27 +14,27 @@ repositories {
 
 dependencies {
     // for type inference
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    compileOnly 'org.projectlombok:lombok:1.18.10'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.10'
-    testCompileOnly 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
 
     // for logging
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'org.slf4j:slf4j-api:1.7.26'
 
     // kafka and kafka streams
-    implementation 'org.apache.kafka:kafka-streams:2.4.0'
-    implementation 'org.apache.kafka:kafka-clients:2.4.0'
-    testImplementation 'org.apache.kafka:kafka-streams-test-utils:2.4.0'
+    implementation 'org.apache.kafka:kafka-streams:2.5.0'
+    implementation 'org.apache.kafka:kafka-clients:2.5.0'
+    testImplementation 'org.apache.kafka:kafka-streams-test-utils:2.5.0'
 
     // kafka streams examples
-    implementation 'org.apache.kafka:kafka-streams-examples:2.4.0'
+    implementation 'org.apache.kafka:kafka-streams-examples:2.5.0'
 
     // avro
     implementation 'org.apache.avro:avro:1.9.2'
-    implementation 'io.confluent:kafka-streams-avro-serde:5.4.0'
-    implementation 'io.confluent:kafka-avro-serializer:5.4.0'
+    implementation 'io.confluent:kafka-streams-avro-serde:5.5.0'
+    implementation 'io.confluent:kafka-avro-serializer:5.5.0'
 
     // others
     implementation 'com.google.guava:guava:28.0-jre'
@@ -55,32 +53,6 @@ test {
 avro {
   dateTimeLogicalType = 'JSR310'
   createOptionalGetters = true
-}
-
-schemaRegistry {
-    url = 'http://localhost:8081/'
-
-    config {
-        subject('user', 'FULL_TRANSITIVE')
-    }
-
-    download {
-        subject('user', 'src/main/avro')
-        subject('order', 'src/main/avro')
-        subject('product-enum', 'src/main/avro')
-    }
-
-    register {
-        subject('user', 'src/main/avro/user.avsc')
-        subject('order', 'src/main/avro/order.avsc')
-        subject('product-enum', 'src/main/avro/product-enum2.avsc')
-    }
-
-    compatibility {
-        subject('user', 'src/main/avro/user.avsc')
-        subject('order', 'src/main/avro/order.avsc')
-        subject('product-enum', 'src/main/avro/product-enum2.avsc')
-    }
 }
 
 task runStreams(type: JavaExec) {
