@@ -1,9 +1,9 @@
-package kafka.streams.sample;
+package kafka.streams.sample.stream.user;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class UserService {
+public class UserStreamsMain {
   public static final String USER_TOPIC = "user-topic";
   public static final String BOOTSTRAP_SERVERS = "localhost:9092";
   public static final String SCHEMA_REGISTRY_URL = "http://localhost:8081";
@@ -13,7 +13,7 @@ public class UserService {
 
   public static void main(String[] args) {
     log.info("start");
-    new UserCount(new UserConfig()).aggregate();
+    new UserStreams(new UserConfig()).aggregate();
     log.info("end");
   }
 }

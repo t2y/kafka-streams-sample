@@ -45,7 +45,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'kafka.streams.sample.UserService'
+    mainClassName = 'kafka.streams.sample.stream.user.UserStreamsMain'
 }
 
 compileJava.dependsOn tasks.googleJavaFormat
@@ -59,11 +59,11 @@ avro {
   createOptionalGetters = true
 }
 
-task runStreams(type: JavaExec) {
+task runUserStream(type: JavaExec) {
     group = 'Execution'
     description = 'Run streams app main class'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'kafka.streams.sample.UserService'
+    main = 'kafka.streams.sample.stream.user.UserStreamsMain'
 }
 
 task runProducer(type: JavaExec) {

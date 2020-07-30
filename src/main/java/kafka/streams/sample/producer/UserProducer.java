@@ -5,8 +5,8 @@ import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import kafka.streams.sample.UserService;
 import kafka.streams.sample.avro.User;
+import kafka.streams.sample.stream.user.UserStreamsMain;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -21,12 +21,14 @@ public class UserProducer {
 
   private Properties createProperties() {
     val p = new Properties();
-    p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, UserService.BOOTSTRAP_SERVERS);
+    p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, UserStreamsMain.BOOTSTRAP_SERVERS);
     p.put(ProducerConfig.ACKS_CONFIG, "all");
     p.put(ProducerConfig.RETRIES_CONFIG, 0);
     p.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
     p.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
-    p.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, UserService.SCHEMA_REGISTRY_URL);
+    p.put(
+        AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+        UserStreamsMain.SCHEMA_REGISTRY_URL);
     return p;
   }
 
@@ -55,7 +57,7 @@ public class UserProducer {
       KafkaProducer<Long, User> producer, long userId, String name, String email)
       throws InterruptedException {
     val user = this.createUser(userId, name, email);
-    val record = new ProducerRecord<Long, User>(UserService.USER_TOPIC, userId, user);
+    val record = new ProducerRecord<Long, User>(UserStreamsMain.USER_TOPIC, userId, user);
     producer.send(record);
     log.info(String.format("sent record: %s", user.toString()));
     Thread.sleep(100L);
@@ -73,7 +75,7 @@ public class UserProducer {
   public void publishUsers(long n) {
     try (val producer = new KafkaProducer<Long, User>(this.props)) {
       for (val user : this.createUsers(n)) {
-        val record = new ProducerRecord<Long, User>(UserService.USER_TOPIC, user.getId(), user);
+        val record = new ProducerRecord<Long, User>(UserStreamsMain.USER_TOPIC, user.getId(), user);
         producer.send(record);
         log.info(String.format("sent record: %s", user.toString()));
       }

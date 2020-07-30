@@ -7,7 +7,7 @@ Kafka Streams sample code
 Start kafka broker and schema registry servers on localhost.
 
 ```bash
-$ ./gradlew run
+$ ./gradle runUserStream
 ```
 
 Topologies

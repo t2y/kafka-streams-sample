@@ -1,4 +1,4 @@
-package kafka.streams.sample;
+package kafka.streams.sample.stream.user;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
@@ -30,11 +30,11 @@ import org.apache.kafka.streams.state.Stores;
 import org.apache.kafka.streams.state.WindowStore;
 
 @Slf4j
-public class UserCount {
+public class UserStreams {
 
   @Getter private final Properties props;
 
-  public UserCount(UserConfig config) {
+  public UserStreams(UserConfig config) {
     this.props = config.getProps();
   }
 
@@ -43,7 +43,7 @@ public class UserCount {
 
   private final StoreBuilder<KeyValueStore<String, Long>> countStoreSupplier =
       Stores.keyValueStoreBuilder(
-              Stores.persistentKeyValueStore(UserService.STORE_COUNTS),
+              Stores.persistentKeyValueStore(UserStreamsMain.STORE_COUNTS),
               Serdes.String(),
               Serdes.Long())
           .withLoggingEnabled(this.changelogConfig);
@@ -54,7 +54,7 @@ public class UserCount {
   void aggregateUserCounts(StreamsBuilder builder) {
     val topicConsumed = Consumed.with(Serdes.Long(), UserConfig.USER_SERDE);
     val countByUserProduced = Produced.with(Serdes.String(), Serdes.Long());
-    val source = builder.<Long, User>stream(UserService.USER_TOPIC, topicConsumed);
+    val source = builder.<Long, User>stream(UserStreamsMain.USER_TOPIC, topicConsumed);
     source
         .mapValues(User::getName)
         .groupBy((key, value) -> value, Grouped.with(Serdes.String(), null))
@@ -70,18 +70,18 @@ public class UserCount {
               log.info("{}: {}, {}", startEnd, key, v.toString());
               return new KeyValue<>(key, v);
             })
-        .to(UserService.COUNT_BY_USER_TOPIC, countByUserProduced);
+        .to(UserStreamsMain.COUNT_BY_USER_TOPIC, countByUserProduced);
   }
 
   @VisibleForTesting
   void showUserCounts(Topology topology) {
-    val sourceName = "source-" + UserService.COUNT_BY_USER_TOPIC;
+    val sourceName = "source-" + UserStreamsMain.COUNT_BY_USER_TOPIC;
     val processorName = PrintUserProcessor.class.getSimpleName();
     topology.addSource(
         sourceName,
         Serdes.String().deserializer(),
         Serdes.Long().deserializer(),
-        UserService.COUNT_BY_USER_TOPIC);
+        UserStreamsMain.COUNT_BY_USER_TOPIC);
     topology.addProcessor(processorName, PrintUserProcessor::new, sourceName);
     topology.addStateStore(countStoreSupplier, processorName);
   }

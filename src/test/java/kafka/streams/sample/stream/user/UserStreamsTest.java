@@ -1,4 +1,4 @@
-package kafka.streams.sample;
+package kafka.streams.sample.stream.user;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,14 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 @Slf4j
-class UserCountTest {
+class UserStreamsTest {
 
   private TopologyTestDriver testDriver;
 
-  private UserCount createUserCount() {
+  private UserStreams createUserCount() {
     val userConfig = new UserConfig();
     userConfig.setBootstrapServer("dummy:1234");
-    return new UserCount(userConfig);
+    return new UserStreams(userConfig);
   }
 
   @BeforeEach
@@ -55,14 +55,16 @@ class UserCountTest {
   void testAggregateUserCounts() {
     val topic =
         this.testDriver.createInputTopic(
-            UserService.USER_TOPIC, Serdes.Long().serializer(), UserConfig.USER_SERDE.serializer());
+            UserStreamsMain.USER_TOPIC,
+            Serdes.Long().serializer(),
+            UserConfig.USER_SERDE.serializer());
     val inputRecords = this.createUserTopicRecords();
     for (val record : inputRecords) {
       topic.pipeInput(record.getKey(), record.getValue());
     }
     val output =
         this.testDriver.createOutputTopic(
-            UserService.COUNT_BY_USER_TOPIC,
+            UserStreamsMain.COUNT_BY_USER_TOPIC,
             Serdes.String().deserializer(),
             Serdes.Long().deserializer());
 
@@ -98,7 +100,7 @@ class UserCountTest {
   void testPrintUser() {
     val topic =
         this.testDriver.createInputTopic(
-            UserService.COUNT_BY_USER_TOPIC,
+            UserStreamsMain.COUNT_BY_USER_TOPIC,
             Serdes.String().serializer(),
             Serdes.Long().serializer());
     val records = this.createUserCountRecords();
