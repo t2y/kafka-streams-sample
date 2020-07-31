@@ -1,7 +1,6 @@
 package kafka.streams.sample.stream.event;
 
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 
