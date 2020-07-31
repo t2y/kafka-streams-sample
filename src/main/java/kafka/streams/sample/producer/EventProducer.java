@@ -1,26 +1,22 @@
 package kafka.streams.sample.producer;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
-
 import java.time.Instant;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
-
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.StringSerializer;
-
 import kafka.streams.sample.avro.Event;
 import kafka.streams.sample.avro.EventType;
 import kafka.streams.sample.serde.MySerdes;
 import kafka.streams.sample.stream.Constant;
 import kafka.streams.sample.stream.event.Topic;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.errors.SerializationException;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 @Slf4j
 public class EventProducer {
@@ -58,7 +54,7 @@ public class EventProducer {
   }
 
   private Event createEvent() {
-    val userId = new Random().nextInt(1024);
+    val userId = new Random().nextInt(8);
     val type = this.getEventType(userId);
     val event =
         Event.newBuilder()
