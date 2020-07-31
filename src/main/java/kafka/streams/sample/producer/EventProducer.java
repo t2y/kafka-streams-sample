@@ -55,10 +55,12 @@ public class EventProducer {
 
   private Event createEvent() {
     val userId = new Random().nextInt(8);
+    val customId = new Random().nextInt(1024);
     val type = this.getEventType(userId);
     val event =
         Event.newBuilder()
             .setUserId(userId)
+            .setCustomId(customId)
             .setType(type)
             .setAction("some")
             .setCreatedAt(Instant.now())

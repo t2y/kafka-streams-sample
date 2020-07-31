@@ -42,7 +42,7 @@ public class EventStreams {
         source
             .groupBy(
                 (key, value) -> {
-                  val chunkNum = String.valueOf(value.getUserId() / 4);
+                  val chunkNum = String.valueOf(value.getCustomId() % 4);
                   return String.format("%d_%s", value.getUserId(), chunkNum);
                 },
                 Grouped.with(Serdes.String(), MySerdes.EVENT_SERDE))

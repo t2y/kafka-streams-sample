@@ -6,6 +6,9 @@
     "name" : "user_id",
     "type" : "long"
   }, {
+    "name" : "custom_id",
+    "type" : "long"
+  }, {
     "name" : "action",
     "type" : "string"
   }, {
