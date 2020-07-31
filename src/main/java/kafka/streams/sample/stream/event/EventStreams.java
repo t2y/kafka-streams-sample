@@ -78,7 +78,13 @@ public class EventStreams {
                 (key, value) -> Long.valueOf(key.split("_")[0]),
                 Grouped.with(Serdes.Long(), Serdes.Long()))
             .windowedBy(TimeWindows.of(Duration.ofDays(1)))
-            .count(Materialized.as(Store.USER_ID_AGGREGATION.getName()))
+            .aggregate(
+                () -> 0L,
+                (key, value, aggregate) -> value + aggregate,
+                Materialized.<Long, Long, WindowStore<Bytes, byte[]>>as(
+                        Store.USER_ID_AGGREGATION.getName())
+                    .withKeySerde(Serdes.Long())
+                    .withValueSerde(Serdes.Long()))
             .toStream((windowedKey, value) -> windowedKey.key());
 
     aggregated.to(Topic.MY_AGGREGATION.getName(), Produced.with(Serdes.Long(), Serdes.Long()));
