@@ -1,0 +1,26 @@
+{
+  "type" : "record",
+  "name" : "Event",
+  "namespace" : "kafka.streams.sample.avro",
+  "fields" : [ {
+    "name" : "user_id",
+    "type" : "long"
+  }, {
+    "name" : "action",
+    "type" : "string"
+  }, {
+    "name" : "type",
+    "type" : {
+      "type": "enum",
+      "name": "EventType",
+      "symbols": ["VIEW", "STOCK", "BUY"]
+    }
+  }, {
+    "name" : "created_at",
+    "type" : { 
+      "type" : "long",
+      "logicalType" : "timestamp-millis"
+    }   
+  } ]
+}
+

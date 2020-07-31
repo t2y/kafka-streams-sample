@@ -59,6 +59,13 @@ avro {
   createOptionalGetters = true
 }
 
+task runEventStreams(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run event streams app main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.stream.event.EventStreamsMain'
+}
+
 task runUserStream(type: JavaExec) {
     group = 'Execution'
     description = 'Run streams app main class'
