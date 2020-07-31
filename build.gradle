@@ -61,9 +61,16 @@ avro {
 
 task runEventStreams(type: JavaExec) {
     group = 'Execution'
-    description = 'Run event streams app main class'
+    description = 'Run event streams main class'
     classpath = sourceSets.main.runtimeClasspath
     main = 'kafka.streams.sample.stream.event.EventStreamsMain'
+}
+
+task runEventProducer(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run event producer main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.producer.EventProducer'
 }
 
 task runUserStream(type: JavaExec) {
