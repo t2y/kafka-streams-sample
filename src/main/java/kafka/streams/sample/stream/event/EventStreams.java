@@ -32,12 +32,6 @@ public class EventStreams {
 
   @VisibleForTesting
   void buildEventAggregation(KStream<String, Event> source) {
-    Materialized<String, Long, WindowStore<Bytes, byte[]>> materialized =
-        Materialized.<String, Long, WindowStore<Bytes, byte[]>>as(
-                Store.CHUNK_NUM_AGGREGATION.getName())
-            .withKeySerde(Serdes.String())
-            .withValueSerde(Serdes.Long());
-
     KStream<String, Long> aggregated =
         source
             .groupBy(
@@ -63,7 +57,10 @@ public class EventStreams {
                   }
                   return total;
                 },
-                materialized)
+                Materialized.<String, Long, WindowStore<Bytes, byte[]>>as(
+                        Store.CHUNK_NUM_AGGREGATION.getName())
+                    .withKeySerde(Serdes.String())
+                    .withValueSerde(Serdes.Long()))
             .toStream((windowedKey, value) -> windowedKey.key());
 
     aggregated.process(MyQueueProcessor::new);
@@ -72,19 +69,18 @@ public class EventStreams {
 
   @VisibleForTesting
   void buildAggregationByUserId(KStream<String, Long> source) {
+    Materialized<Long, Long, WindowStore<Bytes, byte[]>> materialized =
+        Materialized.<Long, Long, WindowStore<Bytes, byte[]>>as(Store.USER_ID_AGGREGATION.getName())
+            .withKeySerde(Serdes.Long())
+            .withValueSerde(Serdes.Long());
+
     KStream<Long, Long> aggregated =
         source
             .groupBy(
                 (key, value) -> Long.valueOf(key.split("_")[0]),
                 Grouped.with(Serdes.Long(), Serdes.Long()))
             .windowedBy(TimeWindows.of(Duration.ofDays(1)))
-            .aggregate(
-                () -> 0L,
-                (key, value, aggregate) -> value + aggregate,
-                Materialized.<Long, Long, WindowStore<Bytes, byte[]>>as(
-                        Store.USER_ID_AGGREGATION.getName())
-                    .withKeySerde(Serdes.Long())
-                    .withValueSerde(Serdes.Long()))
+            .aggregate(() -> 0L, (key, value, aggregate) -> value + aggregate, materialized)
             .toStream((windowedKey, value) -> windowedKey.key());
 
     aggregated.to(Topic.MY_AGGREGATION.getName(), Produced.with(Serdes.Long(), Serdes.Long()));
