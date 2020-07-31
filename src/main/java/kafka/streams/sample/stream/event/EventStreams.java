@@ -46,7 +46,7 @@ public class EventStreams {
                   return String.format("%d_%s", value.getUserId(), chunkNum);
                 },
                 Grouped.with(Serdes.String(), MySerdes.EVENT_SERDE))
-            .windowedBy(TimeWindows.of(Duration.ofMinutes(60)))
+            .windowedBy(TimeWindows.of(Duration.ofSeconds(10)))
             .aggregate(
                 () -> 0L,
                 (key, value, aggregate) -> {
@@ -66,6 +66,7 @@ public class EventStreams {
                 materialized)
             .toStream((windowedKey, value) -> windowedKey.key());
 
+    aggregated.process(MyQueueProcessor::new);
     aggregated.to(Topic.MY_QUEUE.getName(), Produced.with(Serdes.String(), Serdes.Long()));
   }
 
