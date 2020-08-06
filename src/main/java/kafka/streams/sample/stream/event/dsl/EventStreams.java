@@ -19,6 +19,8 @@ import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.Suppressed;
+import org.apache.kafka.streams.kstream.Suppressed.BufferConfig;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.state.WindowStore;
 
@@ -43,7 +45,7 @@ public class EventStreams {
                   return String.format("%d_%s", value.getUserId(), chunkNum);
                 },
                 Grouped.with(Serdes.String(), MySerdes.EVENT_SERDE))
-            .windowedBy(TimeWindows.of(Duration.ofSeconds(10)))
+            .windowedBy(TimeWindows.of(Duration.ofSeconds(10)).grace(Duration.ofSeconds(1)))
             .aggregate(
                 () -> 0L,
                 (key, value, aggregate) -> {
@@ -66,6 +68,7 @@ public class EventStreams {
                         Store.CHUNK_NUM_AGGREGATION.getName())
                     .withKeySerde(Serdes.String())
                     .withValueSerde(Serdes.Long()))
+            .suppress(Suppressed.untilWindowCloses(BufferConfig.unbounded()))
             .toStream((windowedKey, value) -> windowedKey.key());
 
     aggregated.process(MyQueueProcessor::new);
