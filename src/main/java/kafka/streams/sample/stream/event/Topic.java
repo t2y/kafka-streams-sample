@@ -5,6 +5,7 @@ import com.google.common.base.CaseFormat;
 public enum Topic {
   MY_EVENT,
   MY_QUEUE,
+  MY_REPARTITION,
   MY_AGGREGATION;
 
   private final String topicName;

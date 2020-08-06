@@ -66,6 +66,13 @@ task runEventStreamsDSL(type: JavaExec) {
     main = 'kafka.streams.sample.stream.event.dsl.EventStreamsMain'
 }
 
+task runEventStreamsProcessor(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run event streams main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.stream.event.processor.EventStreamsMain'
+}
+
 task runEventProducer(type: JavaExec) {
     group = 'Execution'
     description = 'Run event producer main class'

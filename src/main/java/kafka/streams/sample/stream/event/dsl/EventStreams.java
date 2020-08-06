@@ -52,8 +52,10 @@ public class EventStreams {
                     case VIEW:
                     case STOCK:
                       total += 2;
+                      break;
                     case BUY:
                       total += 10;
+                      break;
                     default:
                       total += 1;
                       break;
