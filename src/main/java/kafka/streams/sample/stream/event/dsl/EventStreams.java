@@ -1,10 +1,13 @@
-package kafka.streams.sample.stream.event;
+package kafka.streams.sample.stream.event.dsl;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
 import java.util.Properties;
 import kafka.streams.sample.avro.Event;
 import kafka.streams.sample.serde.MySerdes;
+import kafka.streams.sample.stream.event.EventStreamsConfig;
+import kafka.streams.sample.stream.event.Store;
+import kafka.streams.sample.stream.event.Topic;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.common.serialization.Serdes;
@@ -106,7 +109,6 @@ public class EventStreams {
 
     this.buildEventAggregation(event);
     this.buildAggregationByUserId(queue);
-    // aggregation.print(Printed.toSysOut());
     aggregation.process(MyAggregationProcessor::new);
 
     val topology = builder.build(this.props);

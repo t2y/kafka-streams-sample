@@ -1,6 +1,7 @@
-package kafka.streams.sample.stream.event;
+package kafka.streams.sample.stream.event.dsl;
 
 import java.util.concurrent.CountDownLatch;
+import kafka.streams.sample.stream.event.EventStreamsConfig;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.streams.KafkaStreams;
