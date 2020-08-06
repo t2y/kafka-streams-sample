@@ -6,6 +6,44 @@ Kafka Streams sample code
 
 Start kafka broker and schema registry servers on localhost.
 
+### Use Processor API
+
+```bash
+$ ./gradlew runEventStreamsProcessor
+```
+
+```
+Topologies:
+   Sub-topology: 0
+    Source: my-event (topics: [my-event])
+      --> EventAggregationProcessor
+    Processor: EventAggregationProcessor (stores: [chunk-num-aggregation])
+      --> my-queue-sink
+      <-- my-event
+    Sink: my-queue-sink (topic: my-queue)
+      <-- EventAggregationProcessor
+
+  Sub-topology: 1
+    Source: my-queue (topics: [my-queue])
+      --> UserIdRepartitionProcessor
+    Processor: UserIdRepartitionProcessor (stores: [])
+      --> my-repartition-sink
+      <-- my-queue
+    Sink: my-repartition-sink (topic: my-repartition)
+      <-- UserIdRepartitionProcessor
+
+  Sub-topology: 2
+    Source: my-repartition (topics: [my-repartition])
+      --> AggregationByUserIdProcessor
+    Processor: AggregationByUserIdProcessor (stores: [user-id-aggregation])
+      --> my-aggregation-sink
+      <-- my-repartition
+    Sink: my-aggregation-sink (topic: my-aggregation)
+      <-- AggregationByUserIdProcessor
+```
+
+### Use Streams DSL
+
 ```bash
 $ ./gradlew runEventStreamsDSL
 ```
