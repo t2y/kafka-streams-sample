@@ -31,7 +31,7 @@ public class EventAggregationProcessor implements Processor<String, Event> {
     this.context = context;
     this.context.schedule(
         Duration.ofSeconds(INTERVAL_SECONDS),
-        PunctuationType.WALL_CLOCK_TIME,
+        PunctuationType.STREAM_TIME,
         (timestamp) -> {
           log.info(
               "schedule every {} sec: {}", INTERVAL_SECONDS, Utils.getLocalDateTime(timestamp));
