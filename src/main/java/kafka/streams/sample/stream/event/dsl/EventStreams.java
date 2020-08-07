@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.Properties;
 import kafka.streams.sample.avro.Event;
 import kafka.streams.sample.serde.MySerdes;
+import kafka.streams.sample.stream.event.ChunkNumPartitioner;
 import kafka.streams.sample.stream.event.EventStreamsConfig;
 import kafka.streams.sample.stream.event.Store;
 import kafka.streams.sample.stream.event.Topic;
@@ -72,7 +73,10 @@ public class EventStreams {
             .toStream((windowedKey, value) -> windowedKey.key());
 
     aggregated.process(MyQueueProcessor::new);
-    aggregated.to(Topic.MY_QUEUE.getName(), Produced.with(Serdes.String(), Serdes.Long()));
+    aggregated.to(
+        Topic.MY_QUEUE.getName(),
+        Produced.with(Serdes.String(), Serdes.Long())
+            .withStreamPartitioner(new ChunkNumPartitioner()));
   }
 
   @VisibleForTesting

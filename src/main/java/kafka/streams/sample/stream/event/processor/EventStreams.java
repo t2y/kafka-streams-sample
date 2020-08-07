@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
 import java.util.Properties;
 import kafka.streams.sample.serde.MySerdes;
+import kafka.streams.sample.stream.event.ChunkNumPartitioner;
 import kafka.streams.sample.stream.event.EventStreamsConfig;
 import kafka.streams.sample.stream.event.Store;
 import kafka.streams.sample.stream.event.Topic;
@@ -67,6 +68,7 @@ public class EventStreams {
         Topic.MY_QUEUE.getName(),
         Serdes.String().serializer(),
         Serdes.Long().serializer(),
+        new ChunkNumPartitioner(),
         eventAggregation);
   }
 
