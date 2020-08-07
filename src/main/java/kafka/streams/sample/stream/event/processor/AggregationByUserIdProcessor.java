@@ -53,10 +53,13 @@ public class AggregationByUserIdProcessor implements Processor<Long, Long> {
 
   @Override
   public void process(Long key, Long value) {
-    log.info("key: {}, value: {}", key, value);
+    log.info("got key: {}, value: {}", key, value);
     val timestamp = this.context.timestamp();
     val date = Instant.ofEpochMilli(timestamp).truncatedTo(ChronoUnit.DAYS).toEpochMilli();
-    val aggregate = this.store.fetch(key, date);
+    Long aggregate = this.store.fetch(key, date);
+    if (aggregate == null) {
+      aggregate = 0L;
+    }
     this.store.put(key, aggregate + value, date);
   }
 

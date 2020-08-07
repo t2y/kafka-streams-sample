@@ -2,7 +2,7 @@ package kafka.streams.sample.stream.event.processor;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import kafka.streams.sample.avro.Event;
 import kafka.streams.sample.stream.event.Store;
 import kafka.streams.sample.stream.event.Utils;
@@ -37,6 +37,7 @@ public class EventAggregationProcessor implements Processor<String, Event> {
               "schedule every {} sec: {}", INTERVAL_SECONDS, Utils.getLocalDateTime(timestamp));
           val fromTime = Instant.ofEpochMilli(timestamp).minusSeconds(INTERVAL_SECONDS);
           val iter = this.store.fetchAll(fromTime.toEpochMilli(), timestamp);
+          val aggregate = new HashMap<String, Long>();
           while (iter.hasNext()) {
             KeyValue<Windowed<String>, Long> entry = iter.next();
             log.info(
@@ -44,44 +45,40 @@ public class EventAggregationProcessor implements Processor<String, Event> {
                 entry.key.key(),
                 entry.value,
                 entry.key.window().startTime());
-            this.context.forward(entry.key.key(), entry.value);
+            val chunkNumKey = entry.key.key();
+            val current = aggregate.getOrDefault(chunkNumKey, 0L);
+            aggregate.put(chunkNumKey, current + entry.value);
           }
           iter.close();
+          log.info("--------------------------------");
+          log.info("aggregated event by chunk num key");
+          for (val e : aggregate.entrySet()) {
+            log.info("key: {}, value: {}", e.getKey(), e.getValue());
+            this.context.forward(e.getKey(), e.getValue());
+          }
           this.context.commit();
           log.info("--------------------------------");
         });
   }
 
-  private Instant truncateSecond() {
-    val timestamp = context.timestamp();
-    val time = Instant.ofEpochMilli(timestamp).truncatedTo(ChronoUnit.SECONDS);
-    val second = time.atZone(Utils.UTC).getSecond();
-    return time.minusSeconds(second % INTERVAL_SECONDS);
+  public Long countValue(Event value) {
+    switch (value.getType()) {
+      case VIEW:
+      case STOCK:
+        return 2L;
+      case BUY:
+        return 10L;
+      default:
+        return 1L;
+    }
   }
 
   @Override
   public void process(String key, Event value) {
     log.info("got key: {}, value: {}", key, value);
-    val chunkNum = value.getCustomId() % 4;
+    val chunkNum = value.getCustomId() % 2;
     val chunkNumKey = String.format("%d_%d", value.getUserId(), chunkNum);
-    val timestamp = this.truncateSecond().toEpochMilli();
-    Long total = this.store.fetch(key, timestamp);
-    if (total == null) {
-      total = 0L;
-    }
-    switch (value.getType()) {
-      case VIEW:
-      case STOCK:
-        total += 2;
-        break;
-      case BUY:
-        total += 10;
-        break;
-      default:
-        total += 1;
-        break;
-    }
-    this.store.put(chunkNumKey, total, timestamp);
+    this.store.put(chunkNumKey, this.countValue(value), context.timestamp());
   }
 
   @Override
