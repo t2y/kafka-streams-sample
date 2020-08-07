@@ -47,8 +47,6 @@ public class EventStreams {
   public EventStreams(EventStreamsConfig config) {
     this.props = config.getProps();
     this.builder = new StreamsBuilder();
-    this.builder.addStateStore(chunkNumAggregationBuilder);
-    this.builder.addStateStore(userIdAggregationBuilder);
   }
 
   @VisibleForTesting
@@ -62,8 +60,7 @@ public class EventStreams {
     val eventAggregation = EventAggregationProcessor.class.getSimpleName();
     topology.addProcessor(
         eventAggregation, EventAggregationProcessor::new, Topic.MY_EVENT.getName());
-    topology.connectProcessorAndStateStores(
-        eventAggregation, Store.CHUNK_NUM_AGGREGATION.getName());
+    topology.addStateStore(chunkNumAggregationBuilder, eventAggregation);
 
     topology.addSink(
         Topic.MY_QUEUE.getName() + "-sink",
@@ -104,8 +101,7 @@ public class EventStreams {
     val aggregationByUserId = AggregationByUserIdProcessor.class.getSimpleName();
     topology.addProcessor(
         aggregationByUserId, AggregationByUserIdProcessor::new, Topic.MY_REPARTITION.getName());
-    topology.connectProcessorAndStateStores(
-        aggregationByUserId, Store.USER_ID_AGGREGATION.getName());
+    topology.addStateStore(userIdAggregationBuilder, aggregationByUserId);
 
     topology.addSink(
         Topic.MY_AGGREGATION.getName() + "-sink",
