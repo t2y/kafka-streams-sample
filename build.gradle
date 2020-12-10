@@ -23,7 +23,7 @@ dependencies {
 
     // for logging
     implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'org.slf4j:slf4j-api:1.7.26'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
 
     // kafka and kafka streams
     implementation 'org.apache.kafka:kafka-streams:2.5.0'
