@@ -1,6 +1,6 @@
 package kafka.streams.sample.serde;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import java.util.Map;
 import kafka.streams.sample.stream.Constant;
 import lombok.val;
@@ -8,7 +8,8 @@ import lombok.val;
 public class MySerdes {
 
   private static final Map<String, String> SERDE_CONFIG =
-      Map.of(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
+      Map.of(
+          AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
 
   public static final EventSerde EVENT_SERDE = getEventSerde();
 

@@ -1,6 +1,6 @@
 package kafka.streams.sample.producer;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import java.time.Instant;
 import java.util.Properties;
 import java.util.Random;
@@ -30,7 +30,7 @@ public class EventProducer {
     p.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
     p.put(
         ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, MySerdes.EVENT_SERDE.serializer().getClass());
-    p.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
+    p.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
     return p;
   }
 

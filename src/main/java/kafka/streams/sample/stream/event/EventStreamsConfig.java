@@ -1,6 +1,6 @@
 package kafka.streams.sample.stream.event;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import java.util.Properties;
 import kafka.streams.sample.stream.Constant;
@@ -26,7 +26,7 @@ public class EventStreamsConfig {
     p.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 3000);
     p.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
     p.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, "1");
-    p.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
+    p.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
     return p;
   }
 
