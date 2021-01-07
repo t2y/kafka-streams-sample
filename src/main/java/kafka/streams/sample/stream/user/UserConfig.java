@@ -1,6 +1,6 @@
 package kafka.streams.sample.stream.user;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import java.util.Collections;
 import java.util.Properties;
@@ -20,7 +20,7 @@ public class UserConfig {
   private static UserSerde getUserSerde() {
     val serdeConfig =
         Collections.singletonMap(
-            AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+            AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
             UserStreamsMain.SCHEMA_REGISTRY_URL);
     val userSerde = new UserSerde();
     userSerde.configure(serdeConfig, false);
@@ -39,7 +39,7 @@ public class UserConfig {
     p.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);
     p.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
     p.put(
-        AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+        AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
         UserStreamsMain.SCHEMA_REGISTRY_URL);
     return p;
   }

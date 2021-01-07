@@ -46,6 +46,7 @@ public class UserStreams {
               Stores.persistentKeyValueStore(UserStreamsMain.STORE_COUNTS),
               Serdes.String(),
               Serdes.Long())
+          .withCachingDisabled()
           .withLoggingEnabled(this.changelogConfig);
 
   private static final long WINDOW_SEC = 5;
@@ -83,7 +84,7 @@ public class UserStreams {
         Serdes.Long().deserializer(),
         UserStreamsMain.COUNT_BY_USER_TOPIC);
     topology.addProcessor(processorName, PrintUserProcessor::new, sourceName);
-    topology.addStateStore(countStoreSupplier, processorName);
+    topology.addStateStore(this.countStoreSupplier, processorName);
   }
 
   @VisibleForTesting
