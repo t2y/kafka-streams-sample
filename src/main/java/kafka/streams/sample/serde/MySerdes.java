@@ -7,6 +7,10 @@ import lombok.val;
 
 public class MySerdes {
 
+  private MySerdes() {
+    throw new IllegalStateException("utility class");
+  }
+
   private static final Map<String, String> SERDE_CONFIG =
       Map.of(
           AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);

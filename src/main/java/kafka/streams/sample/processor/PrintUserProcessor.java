@@ -13,7 +13,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 @Slf4j
 public class PrintUserProcessor implements Processor<String, Long> {
 
-  private static long SCHEDULE_DURATION_SEC = 10;
+  private static final long SCHEDULE_DURATION_SEC = 10;
 
   private ProcessorContext context;
   private KeyValueStore<String, Long> store;

@@ -64,5 +64,7 @@ public class AggregationByUserIdProcessor implements Processor<Long, Long> {
   }
 
   @Override
-  public void close() {}
+  public void close() {
+    // nothing to do
+  }
 }

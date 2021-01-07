@@ -40,7 +40,7 @@ public class UserConsumer {
   }
 
   private static final Duration DURATION_SEC = Duration.ofSeconds(3);
-  private static final long TIMEOUT_MS = 1000 * 60 * 60 * 24; // 1 day
+  private static final long TIMEOUT_MS = 1000L * 60 * 60 * 24; // 1 day
 
   @SuppressWarnings("deprecation")
   private ConsumerRecords<Long, User> poolInternal(

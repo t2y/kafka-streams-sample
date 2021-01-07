@@ -1,5 +1,6 @@
 package kafka.streams.sample.cli;
 
+import java.security.NoSuchAlgorithmException;
 import kafka.streams.sample.env.EnvVar;
 import kafka.streams.sample.producer.UserProducer;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import lombok.val;
 @Slf4j
 public class ProducerMain {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws NoSuchAlgorithmException {
     log.info("ProducerMain start");
     val producer = new UserProducer();
     val userNums = EnvVar.USER_NUMS.getLongValue();

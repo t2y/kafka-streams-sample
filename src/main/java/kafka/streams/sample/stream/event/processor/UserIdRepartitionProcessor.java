@@ -22,5 +22,7 @@ public class UserIdRepartitionProcessor implements Processor<String, Long> {
   }
 
   @Override
-  public void close() {}
+  public void close() {
+    // nothing to do
+  }
 }

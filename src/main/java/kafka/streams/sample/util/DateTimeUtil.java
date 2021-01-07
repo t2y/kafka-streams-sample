@@ -9,7 +9,11 @@ import org.apache.kafka.streams.kstream.Window;
 
 public class DateTimeUtil {
 
-  private static ZoneId ASIA_TOKYO = ZoneId.of("Asia/Tokyo");
+  private DateTimeUtil() {
+    throw new IllegalStateException("utility class");
+  }
+
+  private static final ZoneId ASIA_TOKYO = ZoneId.of("Asia/Tokyo");
 
   public static LocalDateTime getLocalDateTime(Instant instant) {
     return instant.atZone(ASIA_TOKYO).toLocalDateTime();

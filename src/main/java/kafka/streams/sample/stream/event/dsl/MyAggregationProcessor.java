@@ -8,7 +8,9 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 public class MyAggregationProcessor implements Processor<Long, Long> {
 
   @Override
-  public void init(ProcessorContext context) {}
+  public void init(ProcessorContext context) {
+    // nothing to do
+  }
 
   @Override
   public void process(Long key, Long value) {
@@ -16,5 +18,7 @@ public class MyAggregationProcessor implements Processor<Long, Long> {
   }
 
   @Override
-  public void close() {}
+  public void close() {
+    // nothing to do
+  }
 }

@@ -8,6 +8,10 @@ import lombok.val;
 
 public class Utils {
 
+  private Utils() {
+    throw new IllegalStateException("utility class");
+  }
+
   public static final ZoneId UTC = ZoneId.of("UTC");
   public static final ZoneId ASIA_TOKYO = ZoneId.of("Asia/Tokyo");
 

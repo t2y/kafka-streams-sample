@@ -76,11 +76,13 @@ public class EventAggregationProcessor implements Processor<String, Event> {
   @Override
   public void process(String key, Event value) {
     log.info("got key: {}, value: {}", key, value);
-    val chunkNum = value.getCustomId() % 2;
+    long chunkNum = value.getCustomId() % 2;
     val chunkNumKey = String.format("%d_%d", value.getUserId(), chunkNum);
     this.store.put(chunkNumKey, this.countValue(value), context.timestamp());
   }
 
   @Override
-  public void close() {}
+  public void close() {
+    // nothing to do
+  }
 }

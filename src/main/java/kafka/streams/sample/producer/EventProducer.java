@@ -15,7 +15,6 @@ import lombok.val;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 @Slf4j
@@ -57,15 +56,13 @@ public class EventProducer {
     val userId = new Random().nextInt(8);
     val customId = new Random().nextInt(1024);
     val type = this.getEventType(userId);
-    val event =
-        Event.newBuilder()
-            .setUserId(userId)
-            .setCustomId(customId)
-            .setType(type)
-            .setAction("some")
-            .setCreatedAt(Instant.now())
-            .build();
-    return event;
+    return Event.newBuilder()
+        .setUserId(userId)
+        .setCustomId(customId)
+        .setType(type)
+        .setAction("some")
+        .setCreatedAt(Instant.now())
+        .build();
   }
 
   private void run() {
@@ -79,8 +76,9 @@ public class EventProducer {
         log.info("sent event: {}", value);
         Thread.sleep(1000L);
       }
-    } catch (SerializationException | InterruptedException e) {
-      throw new RuntimeException(e);
+    } catch (InterruptedException e) {
+      log.warn("sleeping is interrupted: {}", e.getMessage());
+      Thread.currentThread().interrupt();
     }
   }
 
