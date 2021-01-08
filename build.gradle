@@ -124,6 +124,17 @@ task runUserProducer(type: JavaExec) {
     main = 'kafka.streams.sample.producer.UserProducer'
 }
 
+
+// consumers
+
+task runUserConsumer(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run user consumer main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.consumer.UserConsumer'
+}
+
+
 // to be refactored
 
 task runProducer(type: JavaExec) {

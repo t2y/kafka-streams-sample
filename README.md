@@ -172,6 +172,14 @@ Send order messages to join Global Table (user).
 $ ./gradlew runOrderProducer
 ```
 
+## How to run consumer
+
+### for GlobalTableStreams
+
+```bash
+$ ./gradlew runUserConsumer
+```
+
 ## Reference
 
 * https://kafka.apache.org/documentation/streams/
