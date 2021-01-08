@@ -97,11 +97,11 @@ task runEventProducer(type: JavaExec) {
     main = 'kafka.streams.sample.producer.EventProducer'
 }
 
-task runUserStream(type: JavaExec) {
+task runStream(type: JavaExec) {
     group = 'Execution'
-    description = 'Run streams app main class'
+    description = 'Run SampleStreams main class'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'kafka.streams.sample.stream.user.UserStreamsMain'
+    main = 'kafka.streams.sample.stream.StreamsMain'
 }
 
 task runProducer(type: JavaExec) {

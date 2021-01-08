@@ -7,7 +7,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 import kafka.streams.sample.avro.User;
-import kafka.streams.sample.stream.user.UserStreamsMain;
+import kafka.streams.sample.stream.Constant;
+import kafka.streams.sample.stream.user.UserStreams;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -22,16 +23,14 @@ public class UserConsumer {
 
   private Properties createProperties() {
     val p = new Properties();
-    p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, UserStreamsMain.BOOTSTRAP_SERVERS);
+    p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, Constant.BOOTSTRAP_SERVERS);
     p.put(ConsumerConfig.GROUP_ID_CONFIG, "user-consumer");
     p.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
     p.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     p.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
     p.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
     p.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
-    p.put(
-        AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
-        UserStreamsMain.SCHEMA_REGISTRY_URL);
+    p.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
     return p;
   }
 
@@ -53,7 +52,7 @@ public class UserConsumer {
 
   public void pool(boolean withAsync) {
     try (val consumer = new KafkaConsumer<Long, User>(this.props)) {
-      consumer.subscribe(Collections.singletonList(UserStreamsMain.USER_TOPIC));
+      consumer.subscribe(Collections.singletonList(UserStreams.USER_TOPIC));
       while (true) {
         log.info("before pool");
         val records = this.poolInternal(consumer, withAsync);

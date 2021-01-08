@@ -1,7 +1,7 @@
 package kafka.streams.sample.processor;
 
 import java.time.Duration;
-import kafka.streams.sample.stream.user.UserStreamsMain;
+import kafka.streams.sample.stream.user.UserStreams;
 import kafka.streams.sample.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,8 +23,7 @@ public class PrintUserProcessor implements Processor<String, Long> {
   public void init(ProcessorContext context) {
     log.info("called init()");
     this.context = context;
-    this.store =
-        (KeyValueStore<String, Long>) this.context.getStateStore(UserStreamsMain.STORE_COUNTS);
+    this.store = (KeyValueStore<String, Long>) this.context.getStateStore(UserStreams.STORE_COUNTS);
 
     this.context.schedule(
         Duration.ofSeconds(SCHEDULE_DURATION_SEC),

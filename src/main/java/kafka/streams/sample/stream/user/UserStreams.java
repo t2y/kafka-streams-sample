@@ -4,17 +4,15 @@ import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import kafka.streams.sample.avro.User;
 import kafka.streams.sample.processor.PrintUserProcessor;
+import kafka.streams.sample.stream.SampleStreams;
 import kafka.streams.sample.util.DateTimeUtil;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
@@ -30,9 +28,13 @@ import org.apache.kafka.streams.state.Stores;
 import org.apache.kafka.streams.state.WindowStore;
 
 @Slf4j
-public class UserStreams {
+public class UserStreams implements SampleStreams {
 
-  @Getter private final Properties props;
+  private static final String COUNT_BY_USER_TOPIC = "user-topic-agg-count-by-user";
+  public static final String STORE_COUNTS = "user-store-counts";
+  public static final String USER_TOPIC = "user-topic";
+
+  private final Properties props;
 
   public UserStreams(UserConfig config) {
     this.props = config.getProps();
@@ -43,9 +45,7 @@ public class UserStreams {
 
   private final StoreBuilder<KeyValueStore<String, Long>> countStoreSupplier =
       Stores.keyValueStoreBuilder(
-              Stores.persistentKeyValueStore(UserStreamsMain.STORE_COUNTS),
-              Serdes.String(),
-              Serdes.Long())
+              Stores.persistentKeyValueStore(STORE_COUNTS), Serdes.String(), Serdes.Long())
           .withCachingDisabled()
           .withLoggingEnabled(this.changelogConfig);
 
@@ -54,8 +54,7 @@ public class UserStreams {
   @VisibleForTesting
   void aggregateUserCounts(StreamsBuilder builder) {
     val source =
-        builder.<Long, User>stream(
-            UserStreamsMain.USER_TOPIC, Consumed.with(Serdes.Long(), UserConfig.USER_SERDE));
+        builder.<Long, User>stream(USER_TOPIC, Consumed.with(Serdes.Long(), UserConfig.USER_SERDE));
     source
         .mapValues(User::getName)
         .groupBy((key, value) -> value, Grouped.with(Serdes.String(), null))
@@ -71,24 +70,24 @@ public class UserStreams {
               log.info("{}: {}, {}", startEnd, key, v.toString());
               return new KeyValue<>(key, v);
             })
-        .to(UserStreamsMain.COUNT_BY_USER_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+        .to(COUNT_BY_USER_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
   }
 
   @VisibleForTesting
   void showUserCounts(Topology topology) {
-    val sourceName = "source-" + UserStreamsMain.COUNT_BY_USER_TOPIC;
+    val sourceName = "source-" + COUNT_BY_USER_TOPIC;
     val processorName = PrintUserProcessor.class.getSimpleName();
     topology.addSource(
         sourceName,
         Serdes.String().deserializer(),
         Serdes.Long().deserializer(),
-        UserStreamsMain.COUNT_BY_USER_TOPIC);
+        COUNT_BY_USER_TOPIC);
     topology.addProcessor(processorName, PrintUserProcessor::new, sourceName);
     topology.addStateStore(this.countStoreSupplier, processorName);
   }
 
-  @VisibleForTesting
-  Topology createTopology() {
+  @Override
+  public Topology createTopology() {
     val builder = new StreamsBuilder();
     this.aggregateUserCounts(builder);
     val topology = builder.build();
@@ -97,28 +96,8 @@ public class UserStreams {
     return topology;
   }
 
-  public void start() {
-    val topology = this.createTopology();
-    val streams = new KafkaStreams(topology, this.props);
-    val latch = new CountDownLatch(1);
-
-    // attach shutdown handler to catch control-c
-    Runtime.getRuntime()
-        .addShutdownHook(
-            new Thread("streams-shutdown-hook") {
-              @Override
-              public void run() {
-                streams.close();
-                latch.countDown();
-              }
-            });
-
-    try {
-      streams.start();
-      latch.await();
-    } catch (Exception e) {
-      System.exit(1);
-    }
-    System.exit(0);
+  @Override
+  public Properties getProperties() {
+    return this.props;
   }
 }
