@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import kafka.streams.sample.avro.User;
+import kafka.streams.sample.processor.GlobalUserProcessor;
 import kafka.streams.sample.processor.PrintUserProcessor;
 import kafka.streams.sample.serde.MySerdes;
 import kafka.streams.sample.stream.SampleStreams;
@@ -88,15 +89,24 @@ public class UserStreams implements SampleStreams {
     topology.addStateStore(this.countStoreSupplier, processorName);
   }
 
+  private StoreBuilder<KeyValueStore<Long, User>> globalUserStore =
+      Stores.keyValueStoreBuilder(
+              Stores.inMemoryKeyValueStore(GlobalTableStreams.MY_GLOBAL_USERS_STORE),
+              Serdes.Long(),
+              MySerdes.USER_SERDE)
+          .withLoggingDisabled()
+          .withCachingDisabled();
+
   @Override
   public Topology createTopology() {
     val builder = new StreamsBuilder();
-    builder.globalTable(
+
+    builder.addGlobalStore(
+        globalUserStore,
         GlobalTableStreams.MY_GLOBAL_USERS,
-        Materialized.<Long, User, KeyValueStore<Bytes, byte[]>>as(
-                GlobalTableStreams.MY_GLOBAL_USERS_STORE)
-            .withKeySerde(Serdes.Long())
-            .withValueSerde(MySerdes.USER_SERDE));
+        Consumed.with(Serdes.Long(), MySerdes.USER_SERDE),
+        GlobalUserProcessor::new);
+
     this.aggregateUserCounts(builder);
     val topology = builder.build();
     this.showUserCounts(topology);
