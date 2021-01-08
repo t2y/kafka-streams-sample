@@ -53,9 +53,9 @@ public class UserStreams {
 
   @VisibleForTesting
   void aggregateUserCounts(StreamsBuilder builder) {
-    val topicConsumed = Consumed.with(Serdes.Long(), UserConfig.USER_SERDE);
-    val countByUserProduced = Produced.with(Serdes.String(), Serdes.Long());
-    val source = builder.<Long, User>stream(UserStreamsMain.USER_TOPIC, topicConsumed);
+    val source =
+        builder.<Long, User>stream(
+            UserStreamsMain.USER_TOPIC, Consumed.with(Serdes.Long(), UserConfig.USER_SERDE));
     source
         .mapValues(User::getName)
         .groupBy((key, value) -> value, Grouped.with(Serdes.String(), null))
@@ -71,7 +71,7 @@ public class UserStreams {
               log.info("{}: {}, {}", startEnd, key, v.toString());
               return new KeyValue<>(key, v);
             })
-        .to(UserStreamsMain.COUNT_BY_USER_TOPIC, countByUserProduced);
+        .to(UserStreamsMain.COUNT_BY_USER_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
   }
 
   @VisibleForTesting
@@ -97,7 +97,7 @@ public class UserStreams {
     return topology;
   }
 
-  public void aggregate() {
+  public void start() {
     val topology = this.createTopology();
     val streams = new KafkaStreams(topology, this.props);
     val latch = new CountDownLatch(1);

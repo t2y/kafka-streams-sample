@@ -2,7 +2,6 @@ package kafka.streams.sample.producer;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,9 @@ public class UserProducer {
     return p;
   }
 
-  public UserProducer() throws NoSuchAlgorithmException {
+  public UserProducer() {
     this.props = this.createProperties();
-    this.rand = SecureRandom.getInstanceStrong(); // SecureRandom is preferred to Random
+    this.rand = new SecureRandom();
   }
 
   private User createUser(long userId, String name, String email) {

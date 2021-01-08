@@ -13,7 +13,7 @@ public class UserStreamsMain {
 
   public static void main(String[] args) {
     log.info("start");
-    new UserStreams(new UserConfig()).aggregate();
+    new UserStreams(new UserConfig()).start();
     log.info("end");
   }
 }
