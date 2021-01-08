@@ -6,7 +6,9 @@ Kafka Streams sample code
 
 Start kafka broker and schema registry servers on localhost.
 
-### Use Processor API
+### EventStreams
+
+#### Use Processor API
 
 ```bash
 $ ./gradlew runEventStreamsProcessor
@@ -42,7 +44,7 @@ Topologies:
       <-- AggregationByUserIdProcessor
 ```
 
-### Use Streams DSL
+#### Use Streams DSL
 
 ```bash
 $ ./gradlew runEventStreamsDSL
@@ -114,7 +116,37 @@ Topologies:
       <-- KSTREAM-KEY-SELECT-0000000017
 ```
 
+### GlobalTableStreams
+
+```bash
+$ ./gradlew --info runStream --args='GlobalTableStreams'
+```
+
+```
+Topologies:
+   Sub-topology: 0
+    Source: KSTREAM-SOURCE-0000000000 (topics: [my-order])
+      --> KSTREAM-LEFTJOIN-0000000003
+    Processor: KSTREAM-LEFTJOIN-0000000003 (stores: [])
+      --> KSTREAM-PRINTER-0000000004, KSTREAM-SINK-0000000005
+      <-- KSTREAM-SOURCE-0000000000
+    Processor: KSTREAM-PRINTER-0000000004 (stores: [])
+      --> none
+      <-- KSTREAM-LEFTJOIN-0000000003
+    Sink: KSTREAM-SINK-0000000005 (topic: my-user-order)
+      <-- KSTREAM-LEFTJOIN-0000000003
+
+  Sub-topology: 1 for global store (will not generate tasks)
+    Source: KSTREAM-SOURCE-0000000001 (topics: [my-global-users])
+      --> KTABLE-SOURCE-0000000002
+    Processor: KTABLE-SOURCE-0000000002 (stores: [my-global-users-store])
+      --> none
+      <-- KSTREAM-SOURCE-0000000001
+```
+
 ## How to run producer
+
+### for EventStreams
 
 To send records for EventStreams into kafka, run like this.
 
@@ -124,6 +156,20 @@ $ ./gradlew runEventProducer
 10:56:08.849 [main] INFO  k.s.sample.producer.EventProducer - sent event: {"user_id": 6, "action": "some", "type": "VIEW", "created_at": 2020-07-31T01:56:08.846Z}
 10:56:09.851 [main] INFO  k.s.sample.producer.EventProducer - sent event: {"user_id": 4, "action": "some", "type": "STOCK", "created_at": 2020-07-31T01:56:09.850Z}
 ...
+```
+
+### for GlobalTableStreams
+
+Send user info for Global Table.
+
+```bash
+$ ./gradlew runUserProducer
+```
+
+Send order messages to join Global Table (user).
+
+```bash
+$ ./gradlew runOrderProducer
 ```
 
 ## Reference
