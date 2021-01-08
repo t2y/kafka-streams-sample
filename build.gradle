@@ -76,6 +76,9 @@ tasks.withType(JavaExec) {
     }
 }
 
+
+// streams
+
 task runEventStreamsDSL(type: JavaExec) {
     group = 'Execution'
     description = 'Run event streams main class'
@@ -90,6 +93,16 @@ task runEventStreamsProcessor(type: JavaExec) {
     main = 'kafka.streams.sample.stream.event.processor.EventStreamsMain'
 }
 
+task runStream(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run SampleStreams main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.stream.StreamsMain'
+}
+
+
+// producers
+
 task runEventProducer(type: JavaExec) {
     group = 'Execution'
     description = 'Run event producer main class'
@@ -97,12 +110,21 @@ task runEventProducer(type: JavaExec) {
     main = 'kafka.streams.sample.producer.EventProducer'
 }
 
-task runStream(type: JavaExec) {
+task runOrderProducer(type: JavaExec) {
     group = 'Execution'
-    description = 'Run SampleStreams main class'
+    description = 'Run order producer main class'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'kafka.streams.sample.stream.StreamsMain'
+    main = 'kafka.streams.sample.producer.OrderProducer'
 }
+
+task runUserProducer(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run user producer main class'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'kafka.streams.sample.producer.UserProducer'
+}
+
+// to be refactored
 
 task runProducer(type: JavaExec) {
     group = 'Execution'

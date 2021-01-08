@@ -1,6 +1,8 @@
 package kafka.streams.sample.stream;
 
 import java.util.concurrent.CountDownLatch;
+import kafka.streams.sample.stream.global.GlobalTableConfig;
+import kafka.streams.sample.stream.global.GlobalTableStreams;
 import kafka.streams.sample.stream.user.UserConfig;
 import kafka.streams.sample.stream.user.UserStreams;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,8 @@ public class StreamsMain {
   private static SampleStreams getStreams(String name) {
     if (name.equals("UserStreams")) {
       return new UserStreams(new UserConfig());
+    } else if (name.equals("GlobalTableStreams")) {
+      return new GlobalTableStreams(new GlobalTableConfig());
     } else {
       throw new IllegalArgumentException(name + " is not supported.");
     }

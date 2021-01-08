@@ -1,7 +1,7 @@
 package kafka.streams.sample.cli;
 
 import kafka.streams.sample.env.EnvVar;
-import kafka.streams.sample.producer.UserProducer;
+import kafka.streams.sample.producer.OldUserProducer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -10,7 +10,7 @@ public class ProducerMain {
 
   public static void main(String[] args) {
     log.info("ProducerMain start");
-    val producer = new UserProducer();
+    val producer = new OldUserProducer();
     val userNums = EnvVar.USER_NUMS.getLongValue();
     if (userNums.longValue() == 0) {
       producer.publishUser(

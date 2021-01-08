@@ -16,7 +16,7 @@
     "name" : "id",
     "type" : "string"
   }, {
-    "name" : "customerId",
+    "name" : "userId",
     "type" : "long"
   }, {
     "name" : "state",

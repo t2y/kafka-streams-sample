@@ -1,14 +1,10 @@
 package kafka.streams.sample.producer;
 
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import java.time.Instant;
-import java.util.Properties;
 import java.util.Random;
-import java.util.UUID;
 import kafka.streams.sample.avro.Event;
 import kafka.streams.sample.avro.EventType;
 import kafka.streams.sample.serde.MySerdes;
-import kafka.streams.sample.stream.Constant;
 import kafka.streams.sample.stream.event.Topic;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,28 +14,13 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 @Slf4j
-public class EventProducer {
-  private final Properties props;
-
-  private Properties createProperties() {
-    val p = new Properties();
-    p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Constant.BOOTSTRAP_SERVERS);
-    p.put(ProducerConfig.ACKS_CONFIG, "all");
-    p.put(ProducerConfig.RETRIES_CONFIG, 0);
-    p.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    p.put(
-        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, MySerdes.EVENT_SERDE.serializer().getClass());
-    p.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constant.SCHEMA_REGISTRY_URL);
-    return p;
-  }
+public class EventProducer extends AbstractProducer {
 
   public EventProducer() {
-    this.props = this.createProperties();
-  }
-
-  private String createKey() {
-    val uuid = UUID.randomUUID();
-    return uuid.toString();
+    super();
+    this.props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    this.props.put(
+        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, MySerdes.EVENT_SERDE.serializer().getClass());
   }
 
   private EventType getEventType(int id) {
@@ -65,7 +46,8 @@ public class EventProducer {
         .build();
   }
 
-  private void run() {
+  @Override
+  public void run() {
     try (val producer = new KafkaProducer<String, Event>(this.props)) {
       while (true) {
         val key = this.createKey();
