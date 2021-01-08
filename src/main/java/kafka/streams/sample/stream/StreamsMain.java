@@ -1,6 +1,7 @@
 package kafka.streams.sample.stream;
 
 import java.util.concurrent.CountDownLatch;
+import kafka.streams.sample.avro.User;
 import kafka.streams.sample.stream.global.GlobalTableConfig;
 import kafka.streams.sample.stream.global.GlobalTableStreams;
 import kafka.streams.sample.stream.user.UserConfig;
@@ -8,6 +9,11 @@ import kafka.streams.sample.stream.user.UserStreams;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.errors.InvalidStateStoreException;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.apache.kafka.streams.state.ValueAndTimestamp;
 
 @Slf4j
 public class StreamsMain {
@@ -35,6 +41,33 @@ public class StreamsMain {
     val kafkaStreams = new KafkaStreams(topology, streams.getProperties());
 
     val latch = new CountDownLatch(1);
+
+    kafkaStreams.setStateListener(
+        (newState, oldState) -> {
+          if (newState.isRunningOrRebalancing()) {
+            try {
+              ReadOnlyKeyValueStore<Long, ValueAndTimestamp<User>> users =
+                  kafkaStreams.store(
+                      StoreQueryParameters.fromNameAndType(
+                          GlobalTableStreams.MY_GLOBAL_USERS_STORE,
+                          QueryableStoreTypes.timestampedKeyValueStore()));
+              val iter = users.all();
+              log.info("start: read from Global table");
+              while (iter.hasNext()) {
+                log.info("{}", iter.next());
+              }
+              log.info("end:   read from Global table");
+              log.info("users.get(3): {}", users.get(3L));
+            } catch (InvalidStateStoreException ex) {
+              log.error("cannot find {} store", GlobalTableStreams.MY_GLOBAL_USERS_STORE);
+            }
+          }
+
+          if (!newState.isRunningOrRebalancing()) {
+            latch.countDown();
+          }
+        });
+
     // attach shutdown handler to catch control-c
     Runtime.getRuntime()
         .addShutdownHook(

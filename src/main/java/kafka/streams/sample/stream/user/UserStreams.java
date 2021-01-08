@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Properties;
 import kafka.streams.sample.avro.User;
 import kafka.streams.sample.processor.PrintUserProcessor;
+import kafka.streams.sample.serde.MySerdes;
 import kafka.streams.sample.stream.SampleStreams;
+import kafka.streams.sample.stream.global.GlobalTableStreams;
 import kafka.streams.sample.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +32,7 @@ import org.apache.kafka.streams.state.WindowStore;
 @Slf4j
 public class UserStreams implements SampleStreams {
 
-  private static final String COUNT_BY_USER_TOPIC = "user-topic-agg-count-by-user";
+  public static final String COUNT_BY_USER_TOPIC = "user-topic-agg-count-by-user";
   public static final String STORE_COUNTS = "user-store-counts";
   public static final String USER_TOPIC = "user-topic";
 
@@ -89,6 +91,12 @@ public class UserStreams implements SampleStreams {
   @Override
   public Topology createTopology() {
     val builder = new StreamsBuilder();
+    builder.globalTable(
+        GlobalTableStreams.MY_GLOBAL_USERS,
+        Materialized.<Long, User, KeyValueStore<Bytes, byte[]>>as(
+                GlobalTableStreams.MY_GLOBAL_USERS_STORE)
+            .withKeySerde(Serdes.Long())
+            .withValueSerde(MySerdes.USER_SERDE));
     this.aggregateUserCounts(builder);
     val topology = builder.build();
     this.showUserCounts(topology);

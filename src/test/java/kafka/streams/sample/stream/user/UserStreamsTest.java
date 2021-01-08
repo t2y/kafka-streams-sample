@@ -23,17 +23,13 @@ class UserStreamsTest {
 
   private TopologyTestDriver testDriver;
 
-  private UserStreams createUserCount() {
-    val userConfig = new UserConfig();
-    userConfig.setBootstrapServer("dummy:1234");
-    return new UserStreams(userConfig);
-  }
-
   @BeforeEach
   void setup() {
-    val userCount = this.createUserCount();
-    val topology = userCount.createTopology();
-    this.testDriver = new TopologyTestDriver(topology, userCount.getProps());
+    val userConfig = new UserConfig();
+    userConfig.setBootstrapServer("dummy:1234");
+    val userStreams = new UserStreams(userConfig);
+    val topology = userStreams.createTopology();
+    this.testDriver = new TopologyTestDriver(topology, userStreams.getProperties());
   }
 
   @AfterEach
@@ -55,16 +51,14 @@ class UserStreamsTest {
   void testAggregateUserCounts() {
     val topic =
         this.testDriver.createInputTopic(
-            UserStreamsMain.USER_TOPIC,
-            Serdes.Long().serializer(),
-            UserConfig.USER_SERDE.serializer());
+            UserStreams.USER_TOPIC, Serdes.Long().serializer(), UserConfig.USER_SERDE.serializer());
     val inputRecords = this.createUserTopicRecords();
     for (val record : inputRecords) {
       topic.pipeInput(record.getKey(), record.getValue());
     }
     val output =
         this.testDriver.createOutputTopic(
-            UserStreamsMain.COUNT_BY_USER_TOPIC,
+            UserStreams.COUNT_BY_USER_TOPIC,
             Serdes.String().deserializer(),
             Serdes.Long().deserializer());
 
@@ -100,7 +94,7 @@ class UserStreamsTest {
   void testPrintUser() {
     val topic =
         this.testDriver.createInputTopic(
-            UserStreamsMain.COUNT_BY_USER_TOPIC,
+            UserStreams.COUNT_BY_USER_TOPIC,
             Serdes.String().serializer(),
             Serdes.Long().serializer());
     val records = this.createUserCountRecords();

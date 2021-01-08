@@ -22,10 +22,10 @@ public class GlobalTableStreams implements SampleStreams {
   private final Properties props;
   private final StreamsBuilder builder;
 
-  private static final String MY_GLOBAL_USERS_STORE = "my-global-users-store";
   private static final String MY_USER_ORDER_TOPIC = "my-user-order";
 
   public static final String MY_GLOBAL_USERS = "my-global-users";
+  public static final String MY_GLOBAL_USERS_STORE = "my-global-users-store";
   public static final String MY_ORDER_TOPIC = "my-order";
 
   public GlobalTableStreams(GlobalTableConfig config) {
