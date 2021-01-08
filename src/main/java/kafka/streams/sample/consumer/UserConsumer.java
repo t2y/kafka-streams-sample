@@ -14,6 +14,7 @@ public class UserConsumer extends AbstractConsumer {
   public UserConsumer() {
     super();
     this.props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-consumer");
+    this.props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
   }
 
   private static final long TIMEOUT_MS = 1000L * 60 * 60 * 24; // 1 day
@@ -28,7 +29,11 @@ public class UserConsumer extends AbstractConsumer {
         for (val record : records) {
           log.info("key: " + record.key());
           val user = record.value();
-          log.info("value: " + user.toString());
+          if (user == null) {
+            log.info("user is NULL");
+          } else {
+            log.info("value: {}", user);
+          }
           log.info("------------------------------------------------------------------------");
         }
         consumer.commitSync();
