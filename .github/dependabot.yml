@@ -1,0 +1,25 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "11:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.apache.kafka:kafka-streams-examples
+    versions:
+    - 2.7.0
+    - 6.0.1-ce
+  - dependency-name: org.apache.kafka:kafka-streams
+    versions:
+    - 2.7.0
+    - 6.0.1-ce
+  - dependency-name: org.apache.kafka:kafka-streams-test-utils
+    versions:
+    - 2.7.0
+    - 6.0.1-ce
+  - dependency-name: org.apache.kafka:kafka-clients
+    versions:
+    - 2.7.0
+    - 6.0.1-ce
