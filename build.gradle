@@ -37,7 +37,7 @@ dependencies {
     testImplementation 'org.apache.kafka:kafka-streams-test-utils:2.6.0'
 
     // kafka streams examples
-    implementation 'org.apache.kafka:kafka-streams-examples:2.6.0'
+    implementation 'org.apache.kafka:kafka-streams-examples:6.1.1-ce'
 
     // avro
     implementation 'org.apache.avro:avro:1.10.1'
